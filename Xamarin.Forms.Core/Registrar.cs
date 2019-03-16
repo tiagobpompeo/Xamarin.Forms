@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using Xamarin.Forms.Internal;
 
 namespace Xamarin.Forms
 {
@@ -302,8 +301,6 @@ namespace Xamarin.Forms.Internals
 
 		public static void RegisterAll(Type[] attrTypes, ActivationFlags flags = default(ActivationFlags))
 		{
-			Profile.Push();
-
 			Assembly[] assemblies;
 			assemblies = Device.GetAssemblies();
 
@@ -321,11 +318,8 @@ namespace Xamarin.Forms.Internals
 
 			// Don't use LINQ for performance reasons
 			// Naive implementation can easily take over a second to run
-			Profile.PopPush("Reflect");
 			foreach (Assembly assembly in assemblies)
 			{
-				Profile.Push(assembly.GetName().Name);
-
 				foreach (Type attrType in attrTypes)
 				{
 					object[] attributes;
@@ -358,17 +352,13 @@ namespace Xamarin.Forms.Internals
 				object[] effectAttributes = assembly.GetCustomAttributes(typeof(ExportEffectAttribute)).ToArray();
 #endif
 				RegisterEffects(resolutionName, (ExportEffectAttribute[])effectAttributes);
-				Profile.Pop();
 			}
 
 			var noCss = (flags & ActivationFlags.NoCss) != 0;
 			if (!noCss)
 				RegisterSytlesheets();
 
-			Profile.PopPush("DependencyService.Initialize");
 			DependencyService.Initialize(assemblies);
-
-			Profile.Pop();
 		}
 	}
 }
