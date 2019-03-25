@@ -66,7 +66,7 @@ jobs:
           TargetFolder: ${{ parameters.apkTargetFolder }}
           CleanTargetFolder: true
 
-       - task: PublishBuildArtifacts@1
+      - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifact: ${{ parameters.name }}'
         inputs:
           PathtoPublish: '$(build.artifactstagingdirectory)'

@@ -154,6 +154,7 @@ jobs:
 - job: Phase_6
   displayName: Sign Phase
   dependsOn: Phase_5
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'],'refs/tags/')))
   pool:
     name: VSEng-Xamarin-Forms
   variables:
