@@ -14,6 +14,7 @@ parameters:
   buildConfiguration : 'Debug'
   nugetVersion: 4.8.1
   apkTargetFolder: '$(build.artifactstagingdirectory)/androidApp'
+  artifactName: OSXArtifacts
 
 jobs:
   - job: ${{ parameters.name }}
@@ -64,3 +65,9 @@ jobs:
             ${{ parameters.targetFolder }}/$(ApkName)
           TargetFolder: ${{ parameters.apkTargetFolder }}
           CleanTargetFolder: true
+
+       - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: ${{ parameters.name }}'
+        inputs:
+          PathtoPublish: '$(build.artifactstagingdirectory)'
+          ArtifactName: $(artifactName)
