@@ -70,4 +70,4 @@ jobs:
         displayName: 'Publish Artifact: ${{ parameters.name }}'
         inputs:
           PathtoPublish: '$(build.artifactstagingdirectory)'
-          ArtifactName: $(artifactName)
+          ArtifactName: ${{ parameters.artifactName }}
