@@ -99,7 +99,7 @@ namespace Xamarin.Forms
 		}
 
 		static bool ValidateRoute(string route)
-			=> new Regex(@"^[-a-zA-Z0-9@:%._\+~#=]{1,100}$").IsMatch(route);
+			=> new Regex(@"^[-a-zA-Z0-9@:%._\+~=]{1,100}$").IsMatch(route);
 
 		class TypeRouteFactory : RouteFactory
 		{
