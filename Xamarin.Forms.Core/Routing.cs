@@ -7,7 +7,12 @@ namespace Xamarin.Forms
 	public static class Routing
 	{
 		static int s_routeCount = 0;
+
+#if NETSTANDARD1_0
 		static Dictionary<string, RouteFactory> s_routes = new Dictionary<string, RouteFactory>();
+#else
+		static Dictionary<string, RouteFactory> s_routes = new Dictionary<string, RouteFactory>(StringComparer.InvariantCultureIgnoreCase);
+#endif
 
 		internal const string ImplicitPrefix = "IMPL_";
 
@@ -41,7 +46,9 @@ namespace Xamarin.Forms
 		public static Element GetOrCreateContent(string route)
 		{
 			Element result = null;
-
+#if NETSTANDARD1_0
+			route = route.ToLowerInvariant();
+#endif
 			if (s_routes.TryGetValue(route, out var content))
 				result = content.GetOrCreate();
 
@@ -67,16 +74,22 @@ namespace Xamarin.Forms
 		public static void RegisterRoute(string route, RouteFactory factory)
 		{
 			if (!ValidateRoute(route))
-				throw new ArgumentException("Route must contain only lowercase letters");
+				throw new ArgumentException("Route contain invalid letters");
 
+#if NETSTANDARD1_0
+			route = route.ToLowerInvariant();
+#endif
 			s_routes[route] = factory;
 		}
 
 		public static void RegisterRoute(string route, Type type)
 		{
 			if (!ValidateRoute(route))
-				throw new ArgumentException("Route must contain only lowercase letters");
+				throw new ArgumentException("Route contain invalid letters");
 
+#if NETSTANDARD1_0
+			route = route.ToLowerInvariant();
+#endif
 			s_routes[route] = new TypeRouteFactory(type);
 		}
 
@@ -86,13 +99,7 @@ namespace Xamarin.Forms
 		}
 
 		static bool ValidateRoute(string route)
-		{
-			// Honestly this could probably be expanded to allow any URI allowable character
-			// I just dont want to figure out what that validation looks like.
-			// It does however need to be lowercase since uri case sensitivity is a bit touchy
-			Regex r = new Regex("^[a-z]*$");
-			return r.IsMatch(route);
-		}
+			=> new Regex(@"^[-a-zA-Z0-9@:%._\+~#=]{1,100}$").IsMatch(route);
 
 		class TypeRouteFactory : RouteFactory
 		{
